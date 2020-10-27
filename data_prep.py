@@ -80,7 +80,8 @@ def get_training_data(batch_list, frame_size, batch_size, num_batches, block_siz
     total_samples = batch_size * num_batches
 
     if total_samples > shuffled_squashed_data.shape[1]:
-        raise "You requested more samples than I can offer!"
+        raise Exception("You requested more samples than I can offer! Got " + str(shuffled_squashed_data.shape[1])
+                              + " requested " + str(total_samples) + "!")
 
     batches = []
 

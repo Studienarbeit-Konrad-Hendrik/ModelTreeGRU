@@ -15,9 +15,9 @@ class SimpleGRUEncoder(nn.Module):
         self.encoder_linear = nn.Linear(hidden_units, frame_size)
 
     def forward(self, data):
-        encoder_out, hidden_state = self.encode(data)
+        hidden_state = self.encode(data)
             
-        return encoder_out, hidden_state
+        return hidden_state
 
     def encode(self, data):
         encoder_lstm_batch = data
@@ -25,11 +25,9 @@ class SimpleGRUEncoder(nn.Module):
         # encoder
         encoder_hidden_states = torch.randn(1, data.shape[1], self.hidden_units).cuda()
                 
-        encoder_out, encoder_hidden_states = self.encoder_gru(data, encoder_hidden_states)
+        _, encoder_hidden_states = self.encoder_gru(data, encoder_hidden_states)
         
-        encoder_out = self.encoder_linear(encoder_out)
-                
-        return encoder_out, encoder_hidden_states
+        return encoder_hidden_states
     
     
 
