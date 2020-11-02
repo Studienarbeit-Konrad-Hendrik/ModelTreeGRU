@@ -30,10 +30,10 @@ class TreeNet:
             else:
                 if i == 0:
                     enc = SimpleGRUEncoder(frame_size, t).to(device)
-                    dec = SimpleGRUDecoder(frame_size, t).to(device)
+                    dec = SimpleGRUDecoder(frame_size, t, decode_hu=((frame_size + t) // 2)).to(device)
                 else:
                     enc = SimpleGRUEncoder(hidden_units[i - 1], t).to(device)
-                    dec = SimpleGRUDecoder(hidden_units[i - 1], t).to(device)
+                    dec = SimpleGRUDecoder(hidden_units[i - 1], t, decode_hu=((frame_size + t) // 2)).to(device)
 
                 parameter_list += enc.parameters()
                 parameter_list += dec.parameters()
@@ -42,8 +42,11 @@ class TreeNet:
             self.decoders.append(dec)
 
         print("Parameter list contains " + str(len(parameter_list)) + " entries!")
-
-        self.optimizer = optim.Adam(parameter_list, lr=lr)
+        
+        if len(parameter_list) > 0:
+            self.optimizer = optim.Adam(parameter_list, lr=lr)
+        else:
+            self.optimizer = None
         
     def forward(self, input_d):
         if input_d.shape[0] != self.get_total_datablocks():
@@ -96,3 +99,11 @@ class TreeNet:
     def zero_grad(self):
         for e in self.enocders + self.decoders:
             e.zero_grad()
+
+    def save(filename):
+        for i, e in enumerate(self.encoders):
+            torch.save(e, filename + "-encoder-l" + str(i)+".mdl")
+            
+        for i, d in enumerate(self.decoders):
+            torch.save(d, filename + "-decoder-l" + str(i)+".mdl")
+            

@@ -34,14 +34,14 @@ class SimpleGRUEncoder(nn.Module):
     
 class SimpleGRUDecoder(nn.Module):
     
-    def __init__(self, frame_size, hidden_units):
+    def __init__(self, frame_size, hidden_units, decode_hu=20):
         super(SimpleGRUDecoder, self).__init__()
         self.frame_size = frame_size
         self.hidden_units = hidden_units
                 
         self.decoder_gru = nn.GRU(frame_size, hidden_units, num_layers=1)
-        self.decoder_linear = nn.Linear(hidden_units, 20)
-        self.decoder_linear2 = nn.Linear(20, frame_size)
+        self.decoder_linear = nn.Linear(hidden_units, decode_hu)
+        self.decoder_linear2 = nn.Linear(decode_hu, frame_size)
         self.activation_1 = torch.nn.Tanh()
 
     def forward(self, hidden_state, steps):
