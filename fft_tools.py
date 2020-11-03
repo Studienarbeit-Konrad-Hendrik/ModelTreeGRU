@@ -5,7 +5,7 @@ def get_rfft_rvec(signal, hf_amp=30):
 
   fs *= np.logspace(0,1, num=fs.shape[0], base=hf_amp)
 
-  vec = np.concatenate((fs.real, fs.imag))
+  vec = np.concatenate((fs.real, np.flip(fs.imag, 0)))
 
   return vec
 
@@ -27,7 +27,7 @@ def invert_ffts(fft_mat, hf_damp=30):
   for i in range(fft_mat.shape[0]):
     fs_ser = fft_mat[i]
     fs_real = fs_ser[:fs_ser.shape[0]//2]
-    fs_imag = fs_ser[fs_ser.shape[0]//2:]
+    fs_imag = np.flip(fs_ser[fs_ser.shape[0]//2:])
 
     fs = fs_real + fs_imag * 1j
 
