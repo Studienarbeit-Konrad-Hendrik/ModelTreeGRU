@@ -5,7 +5,7 @@ from google.cloud.exceptions import NotFound
 def get_or_create_bucket(bucket_name):
     try:
         storage_client = storage.Client()
-        the_bucket = storage_client.get_bucket(bucket_or_name=bucket_name, timeout=10)
+        the_bucket = storage_client.get_bucket(bucket_or_name=bucket_name)
         return the_bucket
     except NotFound:
         return create_bucket(bucket_name)
