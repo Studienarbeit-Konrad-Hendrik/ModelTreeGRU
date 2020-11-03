@@ -10,13 +10,40 @@ def get_rfft_rvec(signal, hf_amp=30):
   return vec
 
 
-def signal_to_ffts(signal, step_size):
+def signal_to_ffts(signal, step_size, hf_amp=30):
   out = []
   for i in range(signal.shape[0] // step_size):
-    fs = get_rfft_rvec(signal[i*step_size : (i+1)*step_size])
+    fs = get_rfft_rvec(signal[i*step_size : (i+1)*step_size], hf_amp=hf_amp)
     out.append(fs)
 
   return np.array(out)
+
+
+def signal_batch_to_ffts(signal_batch, step_size, hf_amp=30):
+    tsl = []
+    for b in range(signal_batch.shape[1]):
+        s = signal_batch[:, b, :].reshape((-1,))
+        ts = signal_to_ffts(s, step_size, hf_amp=hf_amp)
+        tsl.append(ts)
+    
+    return np.stack(tsl, axis=1)
+
+
+def dataset_to_ffts(dataset, step_size, hf_amp=30):
+    result_set = []
+    for d in dataset:
+        tb = signal_batch_to_ffts(d, step_size, hf_amp=hf_amp)
+        result_set.append(tb)
+    return result_set
+
+
+def invert_fft_batch(fft_batch, hf_damp=30):
+    ifl = []
+    for b in range(fft_batch.shape[1]):
+        inv_s = invert_ffts(fft_batch[:, b, :], hf_damp=hf_damp)
+        ifl.append(inv_s)
+    
+    return np.stack(ifl, axis=0)
 
 
 def invert_ffts(fft_mat, hf_damp=30):
